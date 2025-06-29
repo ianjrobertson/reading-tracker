@@ -15,7 +15,6 @@ export default async function AddSessionPage() {
     return (
         <div>
             <h1 className="text-xl">Create a new reading session</h1>
-            <p>{JSON.stringify(data?.user)}</p>
             <AddSessionForm user={data?.user}></AddSessionForm>
         </div>
     )
