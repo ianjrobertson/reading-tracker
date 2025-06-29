@@ -10,7 +10,7 @@ export default async function AddSessionPage() {
 
     if (error || !data?.user) {
         redirect("/auth/login");
-      }
+    }
 
     return (
         <div>
