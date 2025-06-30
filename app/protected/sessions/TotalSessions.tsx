@@ -104,8 +104,8 @@ export default function TotalSessions({ user, compact, className, showAverages, 
 
     // Full card display for individual user pages
     return (
-        <div className={`bg-white border border-gray-200 rounded-lg shadow-sm p-6 ${className}`}>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className={`  border border-gray-200 rounded-lg shadow-sm p-6 ${className}`}>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 {showUserId ? `Stats for ${stats.user_id}` : 'Your Reading Stats'}
             </h3>
             
@@ -139,11 +139,11 @@ export default function TotalSessions({ user, compact, className, showAverages, 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {showAverages && (
                             <div className="space-y-3">
-                                <h4 className="text-sm font-medium text-gray-700">Averages per Session</h4>
+                                <h4 className="text-sm font-medium text-gray-700 dark:text-white">Averages per Session</h4>
                                 <div className="space-y-2">
                                     {stats.avg_minutes_per_session && (
                                         <div className="flex justify-between items-center">
-                                            <span className="text-sm text-gray-600">Minutes:</span>
+                                            <span className="text-sm text-gray-600 dark:text-white" >Minutes:</span>
                                             <span className="text-sm font-medium text-blue-600">
                                                 {Math.round(stats.avg_minutes_per_session)} min
                                             </span>
@@ -151,7 +151,7 @@ export default function TotalSessions({ user, compact, className, showAverages, 
                                     )}
                                     {stats.avg_pages_per_session && (
                                         <div className="flex justify-between items-center">
-                                            <span className="text-sm text-gray-600">Pages:</span>
+                                            <span className="text-sm text-gray-600 dark:text-white">Pages:</span>
                                             <span className="text-sm font-medium text-green-600">
                                                 {Math.round(stats.avg_pages_per_session)} pages
                                             </span>

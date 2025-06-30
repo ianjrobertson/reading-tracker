@@ -15,9 +15,9 @@ export default async function ProtectedPage() {
     <div className="flex-1 w-full flex flex-col gap-12">
       <div className="flex flex-col gap-2 items-start">
         <h2 className="font-bold text-2xl mb-4">Reading Tracker 📕</h2>
-        <Link href='/protected/add-session'><p className="hover:bg-black hover:text-white rounded p-1">Add a reading session</p></Link>
-        <Link href='/protected/sessions'><p className="hover:bg-black hover:text-white rounded p-1">View my stats</p></Link>
-        <Link href='/protected/leaderboard'><p className="hover:bg-black hover:text-white rounded p-1">View the reading leaderboard</p></Link>
+        <Link href='/protected/add-session'><p className="hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded p-1">Add a reading session</p></Link>
+        <Link href='/protected/sessions'><p className="hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded p-1">View my stats</p></Link>
+        <Link href='/protected/leaderboard'><p className="hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black rounded p-1">View the reading leaderboard</p></Link>
       </div>
       <div>
       </div>
