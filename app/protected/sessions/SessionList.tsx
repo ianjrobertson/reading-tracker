@@ -24,7 +24,7 @@ export default function SessionList({ user }: Props)
     const supabase = createClient();
     const [sessions, setSessions] = useState<ReadingSession[]>([]);
     const [page, setPage] = useState(1);
-    const pageSize = 15;
+    const pageSize = 10;
     const [totalPages, setTotalPages] = useState<number>(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -87,7 +87,7 @@ export default function SessionList({ user }: Props)
     };
 
     if (loading) {
-        return <div>Loading sessions...</div>;
+        return <div>Loading sessions... 🚀</div>;
     }
 
     if (error) {
@@ -97,7 +97,7 @@ export default function SessionList({ user }: Props)
     return (
     <div>
         {sessions.length === 0 ? (
-            <p>No reading sessions found.</p>
+            <p>No reading sessions found. 😭</p>
         ) : (
             <>
                 <div>
@@ -117,6 +117,7 @@ export default function SessionList({ user }: Props)
                         onClick={goToPreviousPage} 
                         disabled={page <= 1}
                         style={{ padding: '8px 16px' }}
+                        className='cursor-pointer'
                     >
                         Previous
                     </button>
@@ -129,6 +130,7 @@ export default function SessionList({ user }: Props)
                         onClick={goToNextPage} 
                         disabled={page >= totalPages}
                         style={{ padding: '8px 16px' }}
+                        className='cursor-pointer'
                     >
                         Next
                     </button>
