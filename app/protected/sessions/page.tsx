@@ -15,7 +15,7 @@ export default async function sessions() {
     return (
         <>
             <h1 className="text-xl">Reading Sessions for <span className="">{data.user.email}</span> 📈</h1>
-            <TotalSessions user={data.user} compact={false} ></TotalSessions>
+            <TotalSessions user={data.user} compact={false} showAverages={true}></TotalSessions>
             <SessionList user={data.user}></SessionList>
         </>
     )

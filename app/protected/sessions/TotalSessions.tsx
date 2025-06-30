@@ -8,6 +8,8 @@ interface Props {
     compact?: boolean
     className?: string,
     showUserId?: boolean,
+    showAverages?: boolean,
+    showLastSession?: boolean,
 }
 
 interface TotalSessions {
@@ -20,7 +22,7 @@ interface TotalSessions {
     last_session_date: Date,
 }
 
-export default function TotalSessions({ user, compact, className, showUserId }: Props) {
+export default function TotalSessions({ user, compact, className, showAverages, showLastSession, showUserId }: Props) {
     const supabase = createClient();
     const [stats, setStats] = useState<TotalSessions | null>(null);
     const [loading, setLoading] = useState(false);
@@ -74,12 +76,27 @@ export default function TotalSessions({ user, compact, className, showUserId }: 
     // Compact display for leaderboard rows
     if (compact) {
         return (
-            <div className={`stats-compact ${className}`}>
-                {showUserId && <span className="user-id">{stats.user_id}</span>}
-                <span className="minutes">{stats.total_minutes.toLocaleString()} min</span>
-                <span className="pages">{stats.total_pages.toLocaleString()} pages</span>
-                {stats.total_sessions && (
-                    <span className="sessions">{stats.total_sessions} sessions</span>
+            <div className={`flex items-center gap-4 text-sm ${className}`}>
+                {showUserId && (
+                    <span className="font-medium text-gray-700 min-w-0 truncate">
+                        {stats.user_id}
+                    </span>
+                )}
+                <div className="flex gap-3">
+                    <span className="text-blue-600 font-semibold">
+                        {stats.total_minutes.toLocaleString()} min
+                    </span>
+                    <span className="text-green-600 font-semibold">
+                        {stats.total_pages.toLocaleString()} pages
+                    </span>
+                    <span className="text-amber-600 font-semibold">
+                        {stats.total_sessions} sessions
+                    </span>
+                </div>
+                {showLastSession && stats.last_session_date && (
+                    <span className="text-gray-500 text-xs">
+                        {new Date(stats.last_session_date).toLocaleDateString()}
+                    </span>
                 )}
             </div>
         );
@@ -87,45 +104,77 @@ export default function TotalSessions({ user, compact, className, showUserId }: 
 
     // Full card display for individual user pages
     return (
-        <div className={`stats-card ${className}`} style={{
-            border: '1px solid #e2e8f0',
-            borderRadius: '8px',
-            padding: '20px',
-            backgroundColor: '#f8fafc',
-            margin: '10px 0'
-        }}>
-            <h3 style={{ margin: '0 0 15px 0', color: '#1e293b' }}>
+        <div className={`bg-white border border-gray-200 rounded-lg shadow-sm p-6 ${className}`}>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 {showUserId ? `Stats for ${stats.user_id}` : 'Your Reading Stats'}
             </h3>
             
-            <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: stats.total_sessions ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)', 
-                gap: '15px' 
-            }}>
-                <div className="stat-item" style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '2em', fontWeight: 'bold', color: '#3b82f6' }}>
+            {/* Main Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                    <div className="text-3xl font-bold text-blue-600">
                         {stats.total_minutes.toLocaleString()}
                     </div>
-                    <div style={{ color: '#64748b', fontSize: '0.9em' }}>Total Minutes</div>
+                    <div className="text-sm text-gray-600 mt-1">Total Minutes</div>
                 </div>
                 
-                <div className="stat-item" style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '2em', fontWeight: 'bold', color: '#10b981' }}>
+                <div className="text-center p-4 bg-green-50 rounded-lg">
+                    <div className="text-3xl font-bold text-green-600">
                         {stats.total_pages.toLocaleString()}
                     </div>
-                    <div style={{ color: '#64748b', fontSize: '0.9em' }}>Total Pages</div>
+                    <div className="text-sm text-gray-600 mt-1">Total Pages</div>
                 </div>
                 
-                {stats.total_sessions && (
-                    <div className="stat-item" style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '2em', fontWeight: 'bold', color: '#f59e0b' }}>
-                            {stats.total_sessions.toLocaleString()}
-                        </div>
-                        <div style={{ color: '#64748b', fontSize: '0.9em' }}>Total Sessions</div>
+                <div className="text-center p-4 bg-amber-50 rounded-lg">
+                    <div className="text-3xl font-bold text-amber-600">
+                        {stats.total_sessions.toLocaleString()}
                     </div>
-                )}
+                    <div className="text-sm text-gray-600 mt-1">Total Sessions</div>
+                </div>
             </div>
+
+            {/* Additional Stats */}
+            {(showAverages || showLastSession) && (
+                <div className="border-t border-gray-200 pt-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {showAverages && (
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-medium text-gray-700">Averages per Session</h4>
+                                <div className="space-y-2">
+                                    {stats.avg_minutes_per_session && (
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-sm text-gray-600">Minutes:</span>
+                                            <span className="text-sm font-medium text-blue-600">
+                                                {Math.round(stats.avg_minutes_per_session)} min
+                                            </span>
+                                        </div>
+                                    )}
+                                    {stats.avg_pages_per_session && (
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-sm text-gray-600">Pages:</span>
+                                            <span className="text-sm font-medium text-green-600">
+                                                {Math.round(stats.avg_pages_per_session)} pages
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                        
+                        {showLastSession && stats.last_session_date && (
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-medium text-gray-700">Last Activity</h4>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-gray-600">Last Session:</span>
+                                    <span className="text-sm font-medium text-gray-900">
+                                        {new Date(stats.last_session_date).toLocaleDateString()}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
