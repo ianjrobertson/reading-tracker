@@ -73,7 +73,7 @@ export default function AddSessionForm({ user }: Props) {
                     
                 </div>
                 <div className='flex flex-col justify-end'>
-                    <button type="submit" className='bg-zinc-900 p-2  px-4 rounded-md'>{loading ? 'saving' : 'Save Session'} </button>
+                    <button type="submit" className='bg-zinc-900 p-2 text-white  px-4 rounded-md'>{loading ? 'saving' : 'Save Session'} </button>
                     {saved && (
                         <p className='text-green-600'>Saved Succesfully! 🚀</p>
                     )}
