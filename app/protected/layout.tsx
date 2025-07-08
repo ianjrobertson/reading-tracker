@@ -16,7 +16,7 @@ export default function ProtectedLayout({
       <Sidebar />
       
       {/* Main content area */}
-      <div className="flex-1 md:pl-64">
+      <div className="flex-1">
         <main className="min-h-screen flex flex-col items-center">
           <div className="flex-1 w-full flex flex-col gap-20 items-center">
             <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
