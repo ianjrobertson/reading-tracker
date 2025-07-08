@@ -8,10 +8,7 @@ export default function Home() {
   return (
 
     <div className="min-h-screen flex">
-          {/* Sidebar component */}
           <Sidebar />
-          
-          {/* Main content area */}
           <div className="flex-1">
             <main className="min-h-screen flex flex-col items-center">
               <div className="flex-1 w-full flex flex-col gap-20 items-center">
