@@ -14,6 +14,7 @@ interface Props {
 
 interface TotalSessions {
     user_id: string,
+    email: string,
     total_pages: number,
     total_minutes: number,
     total_sessions: number,
@@ -79,7 +80,7 @@ export default function TotalSessions({ user, compact, className, showAverages, 
             <div className={`flex items-center gap-4 text-sm ${className}`}>
                 {showUserId && (
                     <span className="font-medium text-gray-700 min-w-0 truncate">
-                        {stats.user_id}
+                        {stats.email}
                     </span>
                 )}
                 <div className="flex gap-3">
@@ -111,18 +112,18 @@ export default function TotalSessions({ user, compact, className, showAverages, 
             
             {/* Main Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                    <div className="text-3xl font-bold text-blue-600">
-                        {stats.total_minutes.toLocaleString()}
-                    </div>
-                    <div className="text-sm text-gray-600 mt-1">Total Minutes</div>
-                </div>
-                
                 <div className="text-center p-4 bg-green-50 rounded-lg">
                     <div className="text-3xl font-bold text-green-600">
                         {stats.total_pages.toLocaleString()}
                     </div>
                     <div className="text-sm text-gray-600 mt-1">Total Pages</div>
+                </div>
+
+                <div className="text-center p-4 bg-blue-50 rounded-lg">
+                    <div className="text-3xl font-bold text-blue-600">
+                        {stats.total_minutes.toLocaleString()}
+                    </div>
+                    <div className="text-sm text-gray-600 mt-1">Total Minutes</div>
                 </div>
                 
                 <div className="text-center p-4 bg-amber-50 rounded-lg">
