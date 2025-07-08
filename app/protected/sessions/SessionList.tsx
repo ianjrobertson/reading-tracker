@@ -102,7 +102,7 @@ export default function SessionList({ user }: Props)
             <>
                 <div>
                     {sessions.map((session) => (
-                        <div key={session.id} style={{ border: '1px solid #ccc', margin: '10px', padding: '10px' }}>
+                        <div key={session.id} style={{ border: '1px solid #ccc', margin: '10px', padding: '10px' }} className='rounded-md'>
                             <p><strong>Date:</strong> {new Date(session.session_date).toLocaleDateString()}</p>
                             <p><strong>Minutes:</strong> {session.minutes}</p>
                             <p><strong>Pages:</strong> {session.pages}</p>
