@@ -13,7 +13,6 @@ interface TotalSessions {
     last_session_date: Date,
 }
 
-
 export default function LeaderboardList() {
     const supabase = createClient();
 
@@ -49,41 +48,94 @@ export default function LeaderboardList() {
     }, [])
 
     if (loading) {
-        return <div className="">Loading stats...</div>;
+        return (
+            <div className="flex justify-center items-center py-8">
+                <div className="text-gray-600 dark:text-gray-400">Loading stats...</div>
+            </div>
+        );
     }
 
     if (error) {
-        return <div className=''>Error loading stats</div>;
+        return (
+            <div className="flex justify-center items-center py-8">
+                <div className="text-red-600 dark:text-red-400">Error loading stats</div>
+            </div>
+        );
     }
 
     if (userStats.length === 0) {
-        return <div className=''>No stats available</div>;
+        return (
+            <div className="flex justify-center items-center py-8">
+                <div className="text-gray-600 dark:text-gray-400">No stats available</div>
+            </div>
+        );
     }
     
-
     return (
-        <>
+        <div className="space-y-4">
             {userStats.map((stats, index) => (
-                <div key={index} className="flex items-center gap-4 text-sm">
-                    <span className="font-medium text-gray-700 dark:text-white min-w-0 truncate">
-                        {stats.email}
-                    </span>
-                    <div className="flex gap-3">
-                        <span className="text-green-600 font-semibold">
-                            {stats.total_pages.toLocaleString()} pages
-                        </span>
-                        <span className="text-blue-600 font-semibold">
-                            {stats.total_minutes.toLocaleString()} min
-                        </span>
-                        <span className="text-amber-600 font-semibold">
-                            {stats.total_sessions} sessions
-                        </span>
+                <div 
+                    key={index} 
+                    className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow"
+                >
+                    {/* Header with rank and email */}
+                    <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                            <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                {index + 1}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <h3 className="font-medium text-gray-900 dark:text-white truncate">
+                                    {stats.email}
+                                </h3>
+                            </div>
+                        </div>
                     </div>
-                    <span className="text-gray-500 text-xs">
-                        Last Session: {new Date(stats.last_session_date).toLocaleDateString()}
-                    </span>
+
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                        <div className="text-center">
+                            <div className="text-lg font-bold text-green-600 dark:text-green-400">
+                                {stats.total_pages.toLocaleString()}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                                Pages
+                            </div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                                {stats.total_minutes.toLocaleString()}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                                Minutes
+                            </div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-lg font-bold text-amber-600 dark:text-amber-400">
+                                {stats.total_sessions}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                                Sessions
+                            </div>
+                        </div>
+                        <div className="text-center">
+                            <div className="text-lg font-bold text-purple-600 dark:text-purple-400">
+                                {stats.avg_pages_per_session.toFixed(1)}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                                Avg Pages
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Footer with last session date */}
+                    <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
+                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                            Last Session: {new Date(stats.last_session_date).toLocaleDateString()}
+                        </div>
+                    </div>
                 </div>
             ))}
-        </>
+        </div>
     )
 }
