@@ -1,105 +1,240 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# 📖 Reading Tracker App
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+A modern, responsive web application for tracking your reading sessions and competing with other readers. Built with Next.js, Supabase, and Tailwind CSS.
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+![Reading Tracker App](https://img.shields.io/badge/Next.js-19-black?style=for-the-badge&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
+![Supabase](https://img.shields.io/badge/Supabase-Latest-green?style=for-the-badge&logo=supabase)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)
 
-## Features
+## ✨ Features
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Middleware
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+### 📊 Reading Session Tracking
+- **Add Reading Sessions**: Log your reading progress with pages read and time spent
+- **Session History**: View all your past reading sessions with detailed statistics
+- **Progress Analytics**: Track total pages, minutes, and session averages
+- **Personal Dashboard**: See your reading statistics at a glance
 
-## Demo
+### 🏆 Competitive Features
+- **Leaderboard**: Compare your reading progress with other users
+- **Rankings**: See where you stand among all readers
+- **Public Stats**: View other users' reading achievements
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+### 🎨 User Experience
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
+- **Dark/Light Mode**: Toggle between themes for comfortable reading
+- **Modern UI**: Clean, intuitive interface built with Tailwind CSS
+- **Real-time Updates**: Instant feedback when adding sessions
 
-## Deploy to Vercel
+### 🔐 Authentication & Security
+- **User Authentication**: Secure login and registration system
+- **Protected Routes**: Personal data is only accessible to authenticated users
+- **Supabase Integration**: Robust backend with real-time capabilities
 
-Vercel deployment will guide you through creating a Supabase account and project.
+## 🚀 Getting Started
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+### Prerequisites
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+- Node.js 18+ 
+- npm or yarn
+- Supabase account
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
+### Installation
 
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
-
-## Clone and run locally
-
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
-
-2. Create a Next.js app using the Supabase Starter template npx command
-
+1. **Clone the repository**
    ```bash
-   npx create-next-app --example with-supabase with-supabase-app
+   git clone https://github.com/yourusername/reading-tracker.git
+   cd reading-tracker
    ```
 
+2. **Install dependencies**
    ```bash
-   yarn create next-app --example with-supabase with-supabase-app
+   npm install
    ```
 
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
+3. **Set up environment variables**
+   
+   Create a `.env.local` file in the root directory:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
    ```
 
-3. Use `cd` to change into the app's directory
+4. **Set up Supabase Database**
+   
+   In your Supabase dashboard, create the following tables:
 
-   ```bash
-   cd with-supabase-app
+   **users table** (auto-created by Supabase Auth)
+   
+   **reading_sessions table**:
+   ```sql
+   CREATE TABLE reading_sessions (
+     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+     pages_read INTEGER NOT NULL,
+     minutes_spent INTEGER NOT NULL,
+     session_date DATE DEFAULT CURRENT_DATE,
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+   );
    ```
 
-4. Rename `.env.example` to `.env.local` and update the following:
-
+   **leaderboard_view** (for the leaderboard feature):
+   ```sql
+   CREATE VIEW leaderboard_view AS
+   SELECT 
+     user_id,
+     u.email,
+     SUM(pages_read) as total_pages,
+     SUM(minutes_spent) as total_minutes,
+     COUNT(*) as total_sessions,
+     AVG(pages_read) as avg_pages_per_session,
+     AVG(minutes_spent) as avg_minutes_per_session,
+     MAX(session_date) as last_session_date
+   FROM reading_sessions rs
+   JOIN auth.users u ON rs.user_id = u.id
+   GROUP BY user_id, u.email;
    ```
-   NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
-   ```
 
-   Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
-
-5. You can now run the Next.js local development server:
-
+5. **Run the development server**
    ```bash
    npm run dev
    ```
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+6. **Open your browser**
+   
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
+## 📱 Usage
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+### Adding Reading Sessions
+1. Navigate to "Add Session" in the sidebar
+2. Enter the number of pages you read
+3. Enter the time spent reading (in minutes)
+4. Click "Add Session" to save
 
-## Feedback and issues
+### Viewing Your Stats
+1. Go to "My Stats" to see your reading history
+2. View total pages, minutes, and session averages
+3. Browse through your past reading sessions
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+### Checking the Leaderboard
+1. Visit the "Leaderboard" page
+2. See how you rank against other readers
+3. View total pages, minutes, and sessions for all users
 
-## More Supabase examples
+## 🛠️ Technology Stack
 
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+- **Frontend**: Next.js 19, React 19, TypeScript
+- **Styling**: Tailwind CSS, Radix UI components
+- **Backend**: Supabase (PostgreSQL, Auth, Real-time)
+- **Deployment**: Vercel-ready
+- **Icons**: Lucide React
+- **Theme**: Next-themes for dark/light mode
+
+## 📁 Project Structure
+
+```
+reading-tracker/
+├── app/                          # Next.js app directory
+│   ├── auth/                     # Authentication pages
+│   ├── protected/                # Protected routes
+│   │   ├── add-session/         # Add reading sessions
+│   │   ├── sessions/            # View reading history
+│   │   └── leaderboard/         # Leaderboard feature
+│   ├── globals.css              # Global styles
+│   ├── layout.tsx               # Root layout
+│   └── page.tsx                 # Home page
+├── components/                   # Reusable components
+│   ├── ui/                      # UI components (buttons, inputs, etc.)
+│   ├── auth-button.tsx          # Authentication component
+│   ├── sidebar.tsx              # Navigation sidebar
+│   └── theme-switcher.tsx       # Theme toggle
+├── lib/                         # Utility libraries
+│   ├── supabase/                # Supabase client configuration
+│   └── utils.ts                 # Utility functions
+└── middleware.ts                # Next.js middleware
+```
+
+## 🎨 Features in Detail
+
+### Mobile-Responsive Design
+- **Card-based Layout**: Each user's stats are displayed in individual cards
+- **Responsive Grid**: Stats adapt from 2 columns on mobile to 4 on desktop
+- **Touch-Friendly**: Optimized for mobile interaction
+- **Collapsible Sidebar**: Mobile navigation with overlay
+
+### Dark Mode Support
+- **Theme Toggle**: Switch between light and dark modes
+- **Persistent Preference**: Theme choice is saved across sessions
+- **Consistent Styling**: All components support both themes
+
+### Real-time Updates
+- **Instant Feedback**: Sessions appear immediately after adding
+- **Live Leaderboard**: Updates reflect new reading sessions
+- **Optimistic UI**: Interface responds instantly to user actions
+
+## 🔧 Development
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+
+### Code Style
+
+The project uses:
+- **ESLint** for code linting
+- **TypeScript** for type safety
+- **Prettier** for code formatting
+- **Tailwind CSS** for styling
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+1. Push your code to GitHub
+2. Connect your repository to Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy automatically on push
+
+### Other Platforms
+
+The app can be deployed to any platform that supports Next.js:
+- Netlify
+- Railway
+- DigitalOcean App Platform
+- AWS Amplify
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Author
+
+**Ian Robertson**
+- GitHub: [@ianjrobertson](https://github.com/ianjrobertson)
+
+## 🙏 Acknowledgments
+
+- Built with [Next.js](https://nextjs.org/)
+- Styled with [Tailwind CSS](https://tailwindcss.com/)
+- Backend powered by [Supabase](https://supabase.com/)
+- Icons from [Lucide React](https://lucide.dev/)
+
+---
+
+**Happy Reading! 📚**
+
+Made with ❤️ for the reading community.
