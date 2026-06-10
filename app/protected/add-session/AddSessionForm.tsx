@@ -22,7 +22,7 @@ export default function AddSessionForm({ user }: Props) {
         e.preventDefault();
         setLoading(true);
         try {
-            await supabase.from('reading_sessions').insert({
+            await supabase.from('reading_session').insert({
                         notes: notes,
                         minutes: Number(minutes),
                         pages: Number(pages),

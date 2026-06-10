@@ -36,7 +36,7 @@ export default function SessionList({ user }: Props)
             const to = from + pageSize - 1;
 
             const {data, count, error} = await supabase
-                .from('reading_sessions')
+                .from('reading_session')
                 .select('*', { count: 'exact'})
                 .eq('user_id', user_id)
                 .order('created_at', {ascending: false})
