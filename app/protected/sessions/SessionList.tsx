@@ -3,6 +3,10 @@
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
+import { BookText, Clock, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
 interface ReadingSession {
     id: string,
@@ -88,77 +92,80 @@ export default function SessionList({ user }: Props)
     };
 
     if (loading) {
-        return <div>Loading sessions... 🚀</div>;
+        return <p className="text-muted-foreground">Loading sessions… 🚀</p>;
     }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return <p className="text-destructive">Error: {error}</p>;
+    }
+
+    if (sessions.length === 0) {
+        return <p className="text-muted-foreground">No reading sessions yet. 😭</p>;
     }
 
     return (
-    <div>
-        {sessions.length === 0 ? (
-            <p>No reading sessions found. 😭</p>
-        ) : (
-            <>
-                <div>
-                    {sessions.map((session) => (
-                        <div key={session.id} style={{ border: '1px solid #ccc', margin: '10px', padding: '10px' }} className='rounded-md'>
-                            <p><strong>Book:</strong> {session.user_book?.title ?? 'Unknown'}{session.user_book?.author ? ` — ${session.user_book.author}` : ''}</p>
-                            <p><strong>Date:</strong> {new Date(session.session_date).toLocaleDateString()}</p>
-                            <p><strong>Minutes:</strong> {session.minutes_read}</p>
-                            <p><strong>Pages:</strong> {session.pages_read}</p>
-                        </div>
-                    ))}
-                </div>
+        <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {sessions.map((session) => (
+                    <Card key={session.id} className="flex flex-col transition-shadow hover:shadow-md">
+                        <CardHeader className="space-y-1">
+                            <CardTitle className="truncate">
+                                {session.user_book?.title ?? 'Unknown book'}
+                            </CardTitle>
+                            {session.user_book?.author && (
+                                <p className="truncate text-sm text-muted-foreground">
+                                    {session.user_book.author}
+                                </p>
+                            )}
+                        </CardHeader>
+                        <CardContent className="mt-auto flex items-center justify-between">
+                            <div className="flex items-center gap-4 text-sm">
+                                <span className="flex items-center gap-1.5">
+                                    <BookText className="h-4 w-4 text-muted-foreground" />
+                                    <span className="font-medium tabular-nums">{session.pages_read}</span>
+                                    <span className="text-muted-foreground">pages</span>
+                                </span>
+                                <span className="flex items-center gap-1.5">
+                                    <Clock className="h-4 w-4 text-muted-foreground" />
+                                    <span className="font-medium tabular-nums">{session.minutes_read}</span>
+                                    <span className="text-muted-foreground">min</span>
+                                </span>
+                            </div>
+                            <Badge variant="secondary" className="shrink-0">
+                                {new Date(session.session_date).toLocaleDateString()}
+                            </Badge>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
 
-                {/* Pagination Controls */}
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '20px' }}>
-                    <button 
-                        onClick={goToPreviousPage} 
-                        disabled={page <= 1}
-                        style={{ padding: '8px 16px' }}
-                        className='cursor-pointer'
-                    >
-                        Previous
-                    </button>
-                    
-                    <span>
-                        Page {page} of {totalPages}
-                    </span>
-                    
-                    <button 
-                        onClick={goToNextPage} 
-                        disabled={page >= totalPages}
-                        style={{ padding: '8px 16px' }}
-                        className='cursor-pointer'
-                    >
-                        Next
-                    </button>
-                </div>
-
-                {/* Page Number Buttons (for smaller page counts) */}
-                {totalPages <= 10 && (
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '5px', marginTop: '10px' }}>
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                            <button
+            {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2">
+                    <Button variant="outline" size="icon" onClick={goToPreviousPage} disabled={page <= 1} aria-label="Previous page">
+                        <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    {totalPages <= 7 ? (
+                        Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                            <Button
                                 key={pageNum}
+                                variant={pageNum === page ? 'default' : 'outline'}
+                                size="icon"
                                 onClick={() => goToPage(pageNum)}
-                                disabled={pageNum === page}
-                                style={{
-                                    padding: '5px 10px',
-                                    backgroundColor: pageNum === page ? '#007bff' : '#f8f9fa',
-                                    color: pageNum === page ? 'white' : 'black',
-                                    border: '1px solid #ccc'
-                                }}
+                                className="tabular-nums"
                             >
                                 {pageNum}
-                            </button>
-                        ))}
-                    </div>
-                )}
-            </>
-        )}
-    </div>
-);
+                            </Button>
+                        ))
+                    ) : (
+                        <span className="px-2 text-sm text-muted-foreground tabular-nums">
+                            Page {page} of {totalPages}
+                        </span>
+                    )}
+                    <Button variant="outline" size="icon" onClick={goToNextPage} disabled={page >= totalPages} aria-label="Next page">
+                        <ChevronRight className="h-4 w-4" />
+                    </Button>
+                </div>
+            )}
+        </div>
+    );
 }

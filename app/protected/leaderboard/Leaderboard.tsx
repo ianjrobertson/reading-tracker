@@ -1,6 +1,9 @@
 'use client';
 import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
+import { BookText, Clock, Flame, TrendingUp, CalendarDays } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface TotalSessions {
     user_id: string,
@@ -13,7 +16,34 @@ interface TotalSessions {
     last_session_date: Date,
 }
 
-export default function LeaderboardList() {
+const MEDALS = ['🥇', '🥈', '🥉'];
+
+function Rank({ index }: { index: number }) {
+    if (index < 3) {
+        return <span className="text-2xl leading-none">{MEDALS[index]}</span>;
+    }
+    return (
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground tabular-nums">
+            {index + 1}
+        </span>
+    );
+}
+
+function MiniStat({ icon: Icon, value, label }: { icon: typeof BookText; value: string; label: string }) {
+    return (
+        <div className="flex flex-col items-center gap-1">
+            <Icon className="h-4 w-4 text-muted-foreground" />
+            <span className="text-base font-bold tabular-nums leading-none">{value}</span>
+            <span className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</span>
+        </div>
+    );
+}
+
+type Props = {
+    currentUserId?: string
+}
+
+export default function LeaderboardList({ currentUserId }: Props) {
     const supabase = createClient();
 
     const [userStats, setUserStats] = useState<TotalSessions[]>([]);
@@ -48,94 +78,56 @@ export default function LeaderboardList() {
     }, [])
 
     if (loading) {
-        return (
-            <div className="flex justify-center items-center py-8">
-                <div className="text-gray-600 dark:text-gray-400">Loading stats...</div>
-            </div>
-        );
+        return <p className="text-muted-foreground">Loading leaderboard…</p>;
     }
 
     if (error) {
-        return (
-            <div className="flex justify-center items-center py-8">
-                <div className="text-red-600 dark:text-red-400">Error loading stats</div>
-            </div>
-        );
+        return <p className="text-destructive">Error loading leaderboard</p>;
     }
 
     if (userStats.length === 0) {
-        return (
-            <div className="flex justify-center items-center py-8">
-                <div className="text-gray-600 dark:text-gray-400">No stats available</div>
-            </div>
-        );
+        return <p className="text-muted-foreground">No stats available yet.</p>;
     }
-    
+
     return (
-        <div className="space-y-4">
-            {userStats.map((stats, index) => (
-                <div 
-                    key={index} 
-                    className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-shadow"
-                >
-                    {/* Header with rank and email */}
-                    <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                            <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                                {index + 1}
+        <div className="flex flex-col gap-3">
+            {userStats.map((stats, index) => {
+                const isCurrentUser = stats.user_id === currentUserId;
+                return (
+                    <Card
+                        key={stats.user_id}
+                        className={cn(
+                            'transition-shadow hover:shadow-md',
+                            isCurrentUser && 'ring-2 ring-primary'
+                        )}
+                    >
+                        <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="flex min-w-0 items-center gap-3">
+                                <Rank index={index} />
+                                <div className="min-w-0">
+                                    <p className="truncate font-medium">
+                                        {stats.email}
+                                        {isCurrentUser && (
+                                            <span className="ml-2 text-xs font-normal text-muted-foreground">(you)</span>
+                                        )}
+                                    </p>
+                                    <p className="flex items-center gap-1 text-xs text-muted-foreground">
+                                        <CalendarDays className="h-3 w-3" />
+                                        Last read {new Date(stats.last_session_date).toLocaleDateString()}
+                                    </p>
+                                </div>
                             </div>
-                            <div className="min-w-0 flex-1">
-                                <h3 className="font-medium text-gray-900 dark:text-white truncate">
-                                    {stats.email}
-                                </h3>
-                            </div>
-                        </div>
-                    </div>
 
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-                        <div className="text-center">
-                            <div className="text-lg font-bold text-green-600 dark:text-green-400">
-                                {stats.total_pages.toLocaleString()}
+                            <div className="grid grid-cols-4 gap-4 sm:gap-6">
+                                <MiniStat icon={BookText} value={stats.total_pages.toLocaleString()} label="Pages" />
+                                <MiniStat icon={Clock} value={stats.total_minutes.toLocaleString()} label="Min" />
+                                <MiniStat icon={Flame} value={stats.total_sessions.toLocaleString()} label="Sessions" />
+                                <MiniStat icon={TrendingUp} value={(stats.avg_pages_per_session || 0).toFixed(1)} label="Avg pg" />
                             </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
-                                Pages
-                            </div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                                {stats.total_minutes.toLocaleString()}
-                            </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
-                                Minutes
-                            </div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-lg font-bold text-amber-600 dark:text-amber-400">
-                                {stats.total_sessions}
-                            </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
-                                Sessions
-                            </div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-lg font-bold text-purple-600 dark:text-purple-400">
-                                {stats.avg_pages_per_session.toFixed(1)}
-                            </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">
-                                Avg Pages
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Footer with last session date */}
-                    <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                            Last Session: {new Date(stats.last_session_date).toLocaleDateString()}
-                        </div>
-                    </div>
-                </div>
-            ))}
+                        </CardContent>
+                    </Card>
+                );
+            })}
         </div>
     )
 }

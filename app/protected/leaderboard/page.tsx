@@ -12,16 +12,12 @@ export default async function Leaderboard() {
     }
 
     return (
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="mb-6">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    Reading Sessions Leaderboard 📈
-                </h1>
-                <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">
-                    See how you rank among other readers
-                </p>
+        <div className="flex-1 w-full flex flex-col gap-8">
+            <div className="flex flex-col gap-1">
+                <h1 className="text-2xl font-bold">Leaderboard 🏆</h1>
+                <p className="text-muted-foreground">See how you rank among other readers</p>
             </div>
-            <LeaderboardList />
+            <LeaderboardList currentUserId={data.user.id} />
         </div>
     )
 }

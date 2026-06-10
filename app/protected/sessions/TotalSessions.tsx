@@ -2,12 +2,13 @@
 import { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
+import { BookOpen, Clock, Flame, TrendingUp, CalendarDays } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { StatTile } from "@/components/stat-tile";
 
 interface Props {
     user: User
-    compact?: boolean
     className?: string,
-    showUserId?: boolean,
     showAverages?: boolean,
     showLastSession?: boolean,
 }
@@ -23,7 +24,7 @@ interface TotalSessions {
     last_session_date: Date,
 }
 
-export default function TotalSessions({ user, compact, className, showAverages, showLastSession, showUserId }: Props) {
+export default function TotalSessions({ user, className, showAverages, showLastSession }: Props) {
     const supabase = createClient();
     const [stats, setStats] = useState<TotalSessions | null>(null);
     const [loading, setLoading] = useState(false);
@@ -33,13 +34,13 @@ export default function TotalSessions({ user, compact, className, showAverages, 
         try {
             setLoading(true);
             setError(null);
-        
+
             const { data, error } = await supabase
                 .from('leaderboard_view')
                 .select('*')
                 .eq('user_id', user_id)
                 .single(); // Use single() since we expect one result per user
-            
+
             if (error) {
                 console.error('Error fetching user stats:', error.message);
                 setError(error.message);
@@ -63,118 +64,60 @@ export default function TotalSessions({ user, compact, className, showAverages, 
     }, [user])
 
     if (loading) {
-        return <div className={className}>Loading stats...</div>;
+        return <p className={`text-muted-foreground ${className ?? ''}`}>Loading stats…</p>;
     }
 
     if (error) {
-        return <div className={`${className} error`}>Error loading stats</div>;
+        return <p className={`text-destructive ${className ?? ''}`}>Error loading stats</p>;
     }
 
     if (!stats) {
-        return <div className={className}>No stats available</div>;
-    }
-
-    // Compact display for leaderboard rows
-    if (compact) {
         return (
-            <div className={`flex items-center gap-4 text-sm ${className}`}>
-                {showUserId && (
-                    <span className="font-medium text-gray-700 min-w-0 truncate">
-                        {stats.email}
-                    </span>
-                )}
-                <div className="flex gap-3">
-                    <span className="text-blue-600 font-semibold">
-                        {stats.total_minutes.toLocaleString()} min
-                    </span>
-                    <span className="text-green-600 font-semibold">
-                        {stats.total_pages.toLocaleString()} pages
-                    </span>
-                    <span className="text-amber-600 font-semibold">
-                        {stats.total_sessions} sessions
-                    </span>
-                </div>
-                {showLastSession && stats.last_session_date && (
-                    <span className="text-gray-500 text-xs">
-                        {new Date(stats.last_session_date).toLocaleDateString()}
-                    </span>
-                )}
-            </div>
+            <Card className={`p-6 text-muted-foreground ${className ?? ''}`}>
+                No stats yet — log your first reading session to get started. 📖
+            </Card>
         );
     }
 
-    // Full card display for individual user pages
     return (
-        <div className={`  border border-gray-200 rounded-lg shadow-sm p-6 ${className}`}>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                {showUserId ? `Stats for ${stats.user_id}` : 'Your Reading Stats'}
-            </h3>
-            
-            {/* Main Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                <div className="text-center p-4 bg-green-50 rounded-lg">
-                    <div className="text-3xl font-bold text-green-600">
-                        {stats.total_pages.toLocaleString()}
-                    </div>
-                    <div className="text-sm text-gray-600 mt-1">Total Pages</div>
-                </div>
-
-                <div className="text-center p-4 bg-blue-50 rounded-lg">
-                    <div className="text-3xl font-bold text-blue-600">
-                        {stats.total_minutes.toLocaleString()}
-                    </div>
-                    <div className="text-sm text-gray-600 mt-1">Total Minutes</div>
-                </div>
-                
-                <div className="text-center p-4 bg-amber-50 rounded-lg">
-                    <div className="text-3xl font-bold text-amber-600">
-                        {stats.total_sessions.toLocaleString()}
-                    </div>
-                    <div className="text-sm text-gray-600 mt-1">Total Sessions</div>
-                </div>
+        <div className={`flex flex-col gap-4 ${className ?? ''}`}>
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+                <StatTile icon={BookOpen} label="Pages read" value={stats.total_pages.toLocaleString()} />
+                <StatTile icon={Clock} label="Minutes read" value={stats.total_minutes.toLocaleString()} />
+                <StatTile icon={Flame} label="Sessions" value={stats.total_sessions.toLocaleString()} />
+                <StatTile
+                    icon={TrendingUp}
+                    label="Avg pages"
+                    value={Math.round(stats.avg_pages_per_session || 0).toLocaleString()}
+                    hint="per session"
+                />
             </div>
 
-            {/* Additional Stats */}
             {(showAverages || showLastSession) && (
-                <div className="border-t border-gray-200 pt-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {showAverages && (
-                            <div className="space-y-3">
-                                <h4 className="text-sm font-medium text-gray-700 dark:text-white">Averages per Session</h4>
-                                <div className="space-y-2">
-                                    {stats.avg_minutes_per_session && (
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-sm text-gray-600 dark:text-white" >Minutes:</span>
-                                            <span className="text-sm font-medium text-blue-600">
-                                                {Math.round(stats.avg_minutes_per_session)} min
-                                            </span>
-                                        </div>
-                                    )}
-                                    {stats.avg_pages_per_session && (
-                                        <div className="flex justify-between items-center">
-                                            <span className="text-sm text-gray-600 dark:text-white">Pages:</span>
-                                            <span className="text-sm font-medium text-green-600">
-                                                {Math.round(stats.avg_pages_per_session)} pages
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
+                <Card className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+                    {showAverages && (
+                        <div className="flex flex-wrap gap-x-8 gap-y-2 text-sm">
+                            <div className="flex items-center gap-2">
+                                <span className="text-muted-foreground">Avg minutes / session</span>
+                                <span className="font-semibold tabular-nums">
+                                    {Math.round(stats.avg_minutes_per_session || 0)}
+                                </span>
                             </div>
-                        )}
-                        
-                        {showLastSession && stats.last_session_date && (
-                            <div className="space-y-3">
-                                <h4 className="text-sm font-medium text-gray-700">Last Activity</h4>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-sm text-gray-600">Last Session:</span>
-                                    <span className="text-sm font-medium text-gray-900">
-                                        {new Date(stats.last_session_date).toLocaleDateString()}
-                                    </span>
-                                </div>
+                            <div className="flex items-center gap-2">
+                                <span className="text-muted-foreground">Avg pages / session</span>
+                                <span className="font-semibold tabular-nums">
+                                    {Math.round(stats.avg_pages_per_session || 0)}
+                                </span>
                             </div>
-                        )}
-                    </div>
-                </div>
+                        </div>
+                    )}
+                    {showLastSession && stats.last_session_date && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <CalendarDays className="h-4 w-4" />
+                            <span>Last session {new Date(stats.last_session_date).toLocaleDateString()}</span>
+                        </div>
+                    )}
+                </Card>
             )}
         </div>
     );

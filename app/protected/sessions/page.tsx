@@ -13,10 +13,16 @@ export default async function sessions() {
     }
 
     return (
-        <>
-            <h1 className="text-xl">Reading Sessions for <span className="">{data.user.email}</span> 📈</h1>
-            <TotalSessions user={data.user} compact={false} showAverages={true}></TotalSessions>
-            <SessionList user={data.user}></SessionList>
-        </>
+        <div className="flex-1 w-full flex flex-col gap-8">
+            <div className="flex flex-col gap-1">
+                <h1 className="text-2xl font-bold">Reading Stats 📈</h1>
+                <p className="text-muted-foreground">Your reading activity, {data.user.email}</p>
+            </div>
+            <TotalSessions user={data.user} showAverages showLastSession />
+            <div className="flex flex-col gap-4">
+                <h2 className="text-lg font-semibold">Recent sessions</h2>
+                <SessionList user={data.user} />
+            </div>
+        </div>
     )
 }
