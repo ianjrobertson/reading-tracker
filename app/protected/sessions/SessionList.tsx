@@ -7,11 +7,12 @@ import { useEffect, useState } from 'react'
 interface ReadingSession {
     id: string,
     user_id: string,
-    minutes: number,
-    pages: number,
-    notes: string,
+    book_id: string | null,
+    minutes_read: number,
+    pages_read: number,
     session_date: Date,
     created_at: Date,
+    user_book: { title: string | null, author: string | null } | null,
 }
 
 interface Props {
@@ -37,7 +38,7 @@ export default function SessionList({ user }: Props)
 
             const {data, count, error} = await supabase
                 .from('reading_session')
-                .select('*', { count: 'exact'})
+                .select('*, user_book(title, author)', { count: 'exact'})
                 .eq('user_id', user_id)
                 .order('created_at', {ascending: false})
                 .range(from, to)
@@ -103,10 +104,10 @@ export default function SessionList({ user }: Props)
                 <div>
                     {sessions.map((session) => (
                         <div key={session.id} style={{ border: '1px solid #ccc', margin: '10px', padding: '10px' }} className='rounded-md'>
+                            <p><strong>Book:</strong> {session.user_book?.title ?? 'Unknown'}{session.user_book?.author ? ` — ${session.user_book.author}` : ''}</p>
                             <p><strong>Date:</strong> {new Date(session.session_date).toLocaleDateString()}</p>
-                            <p><strong>Minutes:</strong> {session.minutes}</p>
-                            <p><strong>Pages:</strong> {session.pages}</p>
-                            <p><strong>Notes:</strong> {session.notes}</p>
+                            <p><strong>Minutes:</strong> {session.minutes_read}</p>
+                            <p><strong>Pages:</strong> {session.pages_read}</p>
                         </div>
                     ))}
                 </div>

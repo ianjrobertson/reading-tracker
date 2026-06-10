@@ -3,11 +3,12 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Home, BarChart3, Trophy, Plus } from 'lucide-react'
+import { Menu, X, Home, BarChart3, Trophy, Plus, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const navigation = [
   { name: 'Reading Tracker', href: '/protected', icon: Home },
+  { name: 'My Library', href: '/protected/library', icon: BookOpen },
   { name: 'My Stats', href: '/protected/sessions', icon: BarChart3 },
   { name: 'Leaderboard', href: '/protected/leaderboard', icon: Trophy },
   { name: 'Add Session', href: '/protected/add-session', icon: Plus },
